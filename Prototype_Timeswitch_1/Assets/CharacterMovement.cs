@@ -8,6 +8,8 @@ public class CharacterMovement : MonoBehaviour
     private int rotationMeasurement;
     public SpriteRenderer rendererPlayerModern;
     public SpriteRenderer rendererPlayerOld;
+    public Animator knightAnimator;
+    private Vector3 moveRefVelocity = Vector3.zero;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +38,12 @@ public class CharacterMovement : MonoBehaviour
         {
             rigidbody2D.AddForce(new Vector2 (0, 5 * Input.GetAxis("Vertical")));
         }*/
-        rigidbody2D.velocity = new Vector3(20 * Input.GetAxis("Horizontal"), rigidbody2D.velocity.y, 0);
+        //rigidbody2D.velocity = new Vector3(20 * Input.GetAxis("Horizontal"), rigidbody2D.velocity.y, 0);
+        Vector3 targetVelocity = new Vector2(10 * Input.GetAxis("Horizontal"), rigidbody2D.velocity.y);
+        // And then smoothing it out and applying it to the character
+        rigidbody2D.velocity = Vector3.SmoothDamp(rigidbody2D.velocity, targetVelocity, ref moveRefVelocity, 0.1f);
+        knightAnimator.SetFloat("Speed", Mathf.Abs(rigidbody2D.velocity.x));
+        knightAnimator.SetFloat("VerticalSpeed", Mathf.Abs(rigidbody2D.velocity.y));
         if (Input.GetKey("space"))
         {
             rigidbody2D.AddForce(new Vector2(0, 20));
